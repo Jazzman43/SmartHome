@@ -6,18 +6,30 @@ $(document).ready(function(){
     var user = "lismail";
     var deviceMAC = "00:17:88:14:C7:78";
     var deviceDataPath = '/users/' + user + "/device_configs/" + deviceMAC + "/" +"config/";
+    var lightGroupPath = '/users/' + user + "/device_configs/" + deviceMAC + "/" + "groups/";
     var lightConfigPath = '/users/' + user + "/device_configs/" + deviceMAC + "/" + "groups/1/action/";
     var WeMoMACs= ["08:86:3B:6D:95:25", "08:86:3B:71:32:A1"];
     console.log("Path: " + firebaseRef + lightConfigPath);
     console.log("Path: " + firebaseRef + "/" + deviceMAC + "/");
     
     
-    
-    /*Device name header*/
-    
     firebaseRef.child(deviceDataPath).once('value', function(data) {
         $('#deviceName').text(data.val().name);
         $('#newDeviceName').attr("placeholder", data.val().name);
+    });
+    
+    /*Device name header*/
+    
+    /*Dynamically create a collapsible set for each light group*/
+    
+    firebaseRef.child(lightGroupPath).once('value', function(data) {
+        var nextId = 2;
+        data.forEach(function(){
+            var group = "<option>Light Group " + nextId + "</option>";
+            $( "#lightGroup" ).append(group);
+            nextId++;
+        });
+        $( "#lightGroup" ).ready(function(){$( "#lightGroup" ).listview( "refresh" );});
     });
     
     /*On device name change via popup update header and firebase*/
